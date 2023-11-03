@@ -6,6 +6,7 @@ import com.tiger.rpocs.payload.DeleteSampleResponse;
 import com.tiger.rpocs.payload.PatchedSampleRequest;
 import com.tiger.rpocs.payload.SampleRequest;
 import com.tiger.rpocs.payload.SampleResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,14 +18,11 @@ import java.time.LocalDateTime;
 
 
 @Controller
+@RequiredArgsConstructor
 public class SampleController implements SamplesApi {
 
     private final ISample service;
 
-    public SampleController(ISample service) {
-        this.service = service;
-    }
-    
     @Override
     public Mono<ResponseEntity<SampleResponse>> addSample(
             Mono<SampleRequest> sampleRequest,
@@ -35,15 +33,13 @@ public class SampleController implements SamplesApi {
     }
 
     @Override
-    public Mono<ResponseEntity<DeleteSampleResponse>> deleteSample(
-            String id,
-            ServerWebExchange exchange) {
+    public Mono<ResponseEntity<DeleteSampleResponse>> deleteSample(String id, ServerWebExchange exchange) {
+
         service.remove(Long.parseLong(id));
         var response = new DeleteSampleResponse();
         response.setCurrentId(Long.parseLong(id));
         return Mono
-                .just(ResponseEntity
-                        .ok(response))
+                .just(ResponseEntity.ok(response))
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
@@ -59,9 +55,7 @@ public class SampleController implements SamplesApi {
     }
 
     @Override
-    public Mono<ResponseEntity<SampleResponse>> searchCurrentSample(
-            String id,
-            ServerWebExchange exchange) {
+    public Mono<ResponseEntity<SampleResponse>> searchCurrentSample(String id, ServerWebExchange exchange) {
         return service
                 .retrieve(Long.parseLong(id))
                 .map(ResponseEntity::ok)
@@ -75,6 +69,8 @@ public class SampleController implements SamplesApi {
             LocalDateTime startDateTime,
             LocalDateTime endDateTime,
             ServerWebExchange exchange) {
+
         return Mono.just(ResponseEntity.ok(service.retrieveAll()));
+
     }
 }

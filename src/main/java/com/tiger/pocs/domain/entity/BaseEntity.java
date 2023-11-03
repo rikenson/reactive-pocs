@@ -23,7 +23,7 @@ public abstract class BaseEntity {
     private LocalDateTime modifiedAt;
 
     @CreatedBy
-    private String createdBy = "rjacques";
+    private String createdBy;
 
     @LastModifiedBy
     private String modifiedBy;

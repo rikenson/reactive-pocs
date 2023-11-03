@@ -14,10 +14,8 @@ public interface ISample {
 
     Mono<SampleResponse> partialEdit(Long currentId, Mono<PatchedSampleRequest> request);
 
-
     Mono<SampleResponse> retrieve(Long currentId);
 
-    //
     Flux<SampleResponse> retrieveAll();
 
     void remove(Long currentId);

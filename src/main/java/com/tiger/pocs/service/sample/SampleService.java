@@ -17,14 +17,14 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class SampleService implements ISample {
 
-    private final CustomMapper converter;
+    private final CustomMapper mapper;
     private final SampleRepository repository;
 
     @Override
     public Mono<SampleResponse> add(Mono<SampleRequest> request) {
         return request
-                .flatMap(sampleRequest -> repository.save(converter.requestToSampleEntity(sampleRequest)))
-                .map(converter::entityToSampleResponse);
+                .flatMap(sampleRequest -> repository.save(mapper.requestToSampleEntity(sampleRequest)))
+                .map(mapper::entityToSampleResponse);
     }
 
     @Override
@@ -33,28 +33,34 @@ public class SampleService implements ISample {
         return repository.findById(currentId)
                 .flatMap(toEntity(request))
                 .flatMap(repository::save)
-                .map(converter::entityToSampleResponse);
+                .map(mapper::entityToSampleResponse);
     }
 
     @Override
     public Mono<SampleResponse> retrieve(Long currentId) {
-        return repository.findById(currentId).map(converter::entityToSampleResponse);
+        return repository
+                .findById(currentId)
+                .map(mapper::entityToSampleResponse);
+    }
+
+    @Override
+    public Flux<SampleResponse> retrieveAll() {
+        return repository
+                .findAll()
+                .map(mapper::entityToSampleResponse);
     }
     
     @Override
-    public Flux<SampleResponse> retrieveAll() {
-        return repository.findAll().map(converter::entityToSampleResponse);
-    }
-
-
-    @Override
     public void remove(Long currentId) {
-        repository.findById(currentId).flatMap(sample -> repository.deleteById(sample.getCurrentId())).subscribe();
+        repository
+                .findById(currentId)
+                .flatMap(sample -> repository.deleteById(sample.getCurrentId()))
+                .subscribe();
     }
 
     private Function<SampleEntity, Mono<? extends SampleEntity>> toEntity(Mono<PatchedSampleRequest> request) {
         return entity -> request.map(toBeUpdated -> {
-            converter.mapPatchedProps(entity, toBeUpdated);
+            mapper.mapPatchedProps(entity, toBeUpdated);
             return entity;
         });
     }
