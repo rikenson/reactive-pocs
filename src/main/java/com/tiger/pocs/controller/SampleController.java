@@ -2,7 +2,10 @@ package com.tiger.pocs.controller;
 
 import com.tiger.pocs.service.sample.ISample;
 import com.tiger.rpocs.handler.SamplesApi;
-import com.tiger.rpocs.payload.*;
+import com.tiger.rpocs.payload.DeleteSampleResponse;
+import com.tiger.rpocs.payload.PatchedSampleRequest;
+import com.tiger.rpocs.payload.SampleRequest;
+import com.tiger.rpocs.payload.SampleResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,54 +24,7 @@ public class SampleController implements SamplesApi {
     public SampleController(ISample service) {
         this.service = service;
     }
-
-//    @PostMapping
-//    public ResponseEntity<SampleResponse> samplePost(@RequestBody @Validated SampleRequest request) {
-//        return new ResponseEntity<>(service.add(request), HttpStatus.CREATED);
-//    }
-//
-//    @PutMapping("{uuid}")
-//    public ResponseEntity<SampleResponse> sampleEdit(
-//            @RequestBody @Validated SampleResponse request,
-//            @PathVariable("uuid") UUID uuid) {
-//        return ResponseEntity.ok(service.edit(request, uuid));
-//    }
-//
-//    @GetMapping("{uuid}")
-//    public ResponseEntity<SampleResponse> sampleRetrieve(@PathVariable("uuid") UUID uuid) {
-//        return ResponseEntity.ok(service.retrieve(uuid));
-//    }
-//
-//    @GetMapping
-//    public ResponseEntity<List<SampleResponse>> sampleRetrieveAll() {
-//        return ResponseEntity.ok(service.retrieveAll());
-//    }
-//
-//    @GetMapping("/by-filter")
-//    public ResponseEntity<List<SampleResponse>> sampleRetrieveByFilter(
-//            @RequestParam("name") String name,
-//            @RequestParam("status") String status,
-//            @RequestParam("startDateTime") LocalDateTime startDateTime,
-//            @RequestParam("endDateTime") LocalDateTime endDateTime,
-//            @RequestParam("preferredField") String preferredField) {
-//        SampleFilter filter = SampleFilter
-//                .builder()
-//                .name(name)
-//                .status(Status.valueOf(status))
-//                .startDateTime(startDateTime)
-//                .endDateTime(endDateTime)
-//                .preferredField(preferredField)
-//                .build();
-//        return ResponseEntity.ok(service.retrieveByCriteria(filter));
-//    }
-//
-//    @DeleteMapping("{uuid}")
-//    public ResponseEntity<Void> remove(@PathVariable("uuid") UUID uuid) {
-//        service.remove(uuid);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-
-
+    
     @Override
     public Mono<ResponseEntity<SampleResponse>> addSample(
             Mono<SampleRequest> sampleRequest,
@@ -83,9 +39,12 @@ public class SampleController implements SamplesApi {
             String id,
             ServerWebExchange exchange) {
         service.remove(Long.parseLong(id));
+        var response = new DeleteSampleResponse();
+        response.setCurrentId(Long.parseLong(id));
         return Mono
                 .just(ResponseEntity
-                        .ok(new DeleteSampleResponse(Long.parseLong(id), "Element removed successfully")));
+                        .ok(response))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @Override
@@ -95,7 +54,8 @@ public class SampleController implements SamplesApi {
             ServerWebExchange exchange) {
         return service
                 .partialEdit(Long.parseLong(id), patchedSampleRequest)
-                .map(ResponseEntity::ok);
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @Override
@@ -104,7 +64,8 @@ public class SampleController implements SamplesApi {
             ServerWebExchange exchange) {
         return service
                 .retrieve(Long.parseLong(id))
-                .map(ResponseEntity::ok);
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @Override
@@ -115,13 +76,5 @@ public class SampleController implements SamplesApi {
             LocalDateTime endDateTime,
             ServerWebExchange exchange) {
         return Mono.just(ResponseEntity.ok(service.retrieveAll()));
-    }
-
-    @Override
-    public Mono<ResponseEntity<SampleResponse>> updateSample(
-            String id,
-            Mono<UpdatedSampleRequest> updatedSampleRequest,
-            ServerWebExchange exchange) {
-        return SamplesApi.super.updateSample(id, updatedSampleRequest, exchange);
     }
 }

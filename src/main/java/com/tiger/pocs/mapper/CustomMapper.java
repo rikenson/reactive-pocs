@@ -11,8 +11,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, componentModel = "spring", builder = @Builder(disableBuilder = true))
 public interface CustomMapper {
-
-    //    @Mapping(target = "uuid", defaultExpression = "java(UUID.randomUUID
     SampleEntity requestToSampleEntity(SampleRequest request);
 
     SampleResponse entityToSampleResponse(SampleEntity entity);
