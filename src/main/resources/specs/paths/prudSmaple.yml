@@ -1,0 +1,80 @@
+#___________________________________________________________________________
+#1. Update Sample
+put:
+  tags:
+    - sample-endpoints
+  summary: Update a specific sample by id.
+  operationId: updateSample
+  security: [ ]
+  parameters:
+    - $ref: "../params/common.yml#/id"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/sample.yml#/UpdatedSampleRequest"
+  responses:
+    "200":
+      description: Found item structure.
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/sample.yml#/SampleResponse"
+
+# #___________________________________________________________________________
+#3.Delete Sample
+delete:
+  tags:
+    - sample-endpoints
+  summary: Delete a specific sample by id.
+  operationId: deleteSample
+  parameters:
+    - $ref: "../params/common.yml#/id"
+  responses:
+    "200":
+      description: Found item structure.
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/sample.yml#/DeleteSampleResponse"
+
+#___________________________________________________________________________
+#3.Update Sample
+patch:
+  tags:
+    - sample-endpoints
+  summary: patch to sample by id.
+  operationId: patchSample
+  parameters:
+    - $ref: "../params/common.yml#/id"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/sample.yml#/PatchedSampleRequest"
+  responses:
+    "200":
+      description: Found item structure.
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/sample.yml#/SampleResponse"
+
+
+
+#___________________________________________________________________________
+#4.Find page of sample
+get:
+  tags:
+    - sample-endpoints
+  summary: Fetch a specific sample.
+  operationId: searchCurrentSample
+  parameters:
+    - $ref: "../params/common.yml#/id"
+  responses:
+    "200":
+      description: Found item by id.
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/sample.yml#/SampleResponse"

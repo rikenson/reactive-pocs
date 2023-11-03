@@ -1,0 +1,81 @@
+openapi: 3.0.0
+servers:
+  - url: "https://{env}.mendoz.labs/apis/sample:{port}/{basePath}"
+    description: Development Server for sample api
+    variables:
+      env:
+        default: dev
+        description: Development environment
+      port:
+        enum:
+          - '4000'
+          - '8080'
+        default: '4000'
+      basePath:
+        default: v1
+  - url: "https://{env}.mendoz.labs/apis/sample:{port}/{basePath}"
+    description: Staging Server for sample api
+    variables:
+      env:
+        default: stg
+        description: Staging environment
+      port:
+        enum:
+          - '4000'
+          - '8080'
+        default: '4000'
+      basePath:
+        default: v1
+  - url: "https://{env}.mendoz.labs/apis/sample:{port}/{basePath}"
+    description: Production Server for sample api
+    variables:
+      env:
+        default: prod
+        description: Production environment
+      port:
+        enum:
+          - '4000'
+          - '8080'
+        default: '4000'
+      basePath:
+        default: v1
+
+info:
+  termsOfService: https://mendoz.labs/terms/apis/sample
+  title: sample-management-rest
+  version: 1.0.0
+  description: Sample Management service
+  contact:
+    email: infos-dev@mendoz.labs
+  license:
+    name: SBT 1.0
+    url: "https://www.licence.mendoz.labs"
+
+tags:
+  - name: sample-endpoints
+    description: Samples management operations
+
+paths:
+  /samples:
+    $ref: "./paths/crSample.yml"
+  /samples/{id}:
+    $ref: "./paths/prudSmaple.yml"
+
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+    sample_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: "https://localhost/oauth/auth"
+          scopes:
+            write: allows modifying resources
+            read: allows reading resources
+  parameters:
+    $ref: "./params/common.yml"
+  schemas:
+    $ref: "./schemas/sample.yml"

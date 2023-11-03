@@ -1,0 +1,78 @@
+$ref: './base-models.yml'
+
+BaseSample:
+  type: object
+  title: BaseSample
+  properties:
+    name:
+      type: string
+      example: "Unit Testing"
+    description:
+      type: string
+      example: "Sample sur la mise en place des test unitaires..."
+    status:
+      type: string
+      default: PENDING
+      enum: [ ENDED, STARTED, CANCELED, PENDING ]
+    startDateTime:
+      type: string
+      format: date-time
+      example: "2017-07-21T17:32:28.000Z"
+    endDateTime:
+      type: string
+      format: date-time
+      example: "2017-07-21T17:32:28.000Z"
+
+
+SampleRequest:
+  allOf:
+    - $ref: '#/BaseSample'
+    - type: object
+      title: SampleRequest
+      required:
+        - name
+        - description
+        - startDateTime
+        - endDateTime
+        - status
+
+PatchedSampleRequest:
+  allOf:
+    - $ref: '#/BaseSample'
+    - type: object
+      title: PatchedSampleRequest
+
+UpdatedSampleRequest:
+  allOf:
+    - $ref: '#/BaseSample'
+    - $ref: '#/AuditModel'
+    - type: object
+      title: UpdatedSampleRequest
+      required:
+        - name
+        - description
+        - startDateTime
+        - endDateTime
+        - status
+
+
+SampleResponse:
+  allOf:
+    - $ref: '#/IDModel'
+    - $ref: '#/SampleRequest'
+    - $ref: '#/BaseResponseModel'
+    - type: object
+      title: SampleResponse
+
+
+DeleteSampleResponse:
+  allOf:
+    - $ref: '#/IDModel'
+    - type: object
+      title: DeleteSampleResponse
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          default: "Element removed successfully"

@@ -1,0 +1,42 @@
+#___________________________________________________________________________
+#1.Add brand sample
+post:
+  tags:
+    - sample-endpoints
+  summary: Register new sample.
+  operationId: addSample
+  description: Add a brand new sample
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/sample.yml#/SampleRequest"
+  responses:
+    "201":
+      description: Item created successfully.
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/sample.yml#/SampleResponse"
+
+#___________________________________________________________________________
+#4.Find page of sample
+get:
+  tags:
+    - sample-endpoints
+  summary: Fetch pages of samples filtered by criteria.
+  operationId: searchSamples
+  parameters:
+    - $ref: "../params/common.yml#/status"
+    - $ref: "../params/common.yml#/preferredField"
+    - $ref: "../params/common.yml#/startDateTime"
+    - $ref: "../params/common.yml#/endDateTime"
+  responses:
+    "200":
+      description: Found item structure.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "../schemas/sample.yml#/SampleResponse"

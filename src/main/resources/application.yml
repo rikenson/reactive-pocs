@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: pocs
+  r2dbc:
+    username: usrdev
+    password: P@ssw0rd
+    url: r2dbc:postgresql://localhost:5432/pocs_db
+    initialization-mode: always
+server:
+  port: 4000
+  servlet:
+    context-path: /reactive-pocs

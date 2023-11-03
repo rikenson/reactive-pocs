@@ -1,0 +1,346 @@
+openapi: 3.0.0
+info:
+  termsOfService: https://mendoz.labs/terms/apis/sample
+  title: sample-management-rest
+  version: 1.0.0
+  description: Sample Management service
+  contact:
+    email: infos-dev@mendoz.labs
+  license:
+    name: SBT 1.0
+    url: https://www.licence.mendoz.labs
+servers:
+  - url: https://{env}.mendoz.labs/apis/sample:{port}/{basePath}
+    description: Development Server for sample api
+    variables:
+      env:
+        default: dev
+        description: Development environment
+      port:
+        enum:
+          - '4000'
+          - '8080'
+        default: '4000'
+      basePath:
+        default: v1
+  - url: https://{env}.mendoz.labs/apis/sample:{port}/{basePath}
+    description: Staging Server for sample api
+    variables:
+      env:
+        default: stg
+        description: Staging environment
+      port:
+        enum:
+          - '4000'
+          - '8080'
+        default: '4000'
+      basePath:
+        default: v1
+  - url: https://{env}.mendoz.labs/apis/sample:{port}/{basePath}
+    description: Production Server for sample api
+    variables:
+      env:
+        default: prod
+        description: Production environment
+      port:
+        enum:
+          - '4000'
+          - '8080'
+        default: '4000'
+      basePath:
+        default: v1
+tags:
+  - name: sample-endpoints
+    description: Samples management operations
+paths:
+  /samples:
+    post:
+      tags:
+        - sample-endpoints
+      summary: Register new sample.
+      operationId: addSample
+      description: Add a brand new sample
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SampleRequest'
+      responses:
+        '201':
+          description: Item created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleResponse'
+    get:
+      tags:
+        - sample-endpoints
+      summary: Fetch pages of samples filtered by criteria.
+      operationId: searchSamples
+      parameters:
+        - $ref: '#/components/parameters/status'
+        - $ref: '#/components/parameters/preferredField'
+        - $ref: '#/components/parameters/startDateTime'
+        - $ref: '#/components/parameters/endDateTime'
+      responses:
+        '200':
+          description: Found item structure.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SampleResponse'
+  /samples/{id}:
+    put:
+      tags:
+        - sample-endpoints
+      summary: Update a specific sample by id.
+      operationId: updateSample
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatedSampleRequest'
+      responses:
+        '200':
+          description: Found item structure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleResponse'
+    delete:
+      tags:
+        - sample-endpoints
+      summary: Delete a specific sample by id.
+      operationId: deleteSample
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Found item structure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteSampleResponse'
+    patch:
+      tags:
+        - sample-endpoints
+      summary: patch to sample by id.
+      operationId: patchSample
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSampleRequest'
+      responses:
+        '200':
+          description: Found item structure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleResponse'
+    get:
+      tags:
+        - sample-endpoints
+      summary: Fetch a specific sample.
+      operationId: searchCurrentSample
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Found item by id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleResponse'
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+    sample_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://localhost/oauth/auth
+          scopes:
+            write: allows modifying resources
+            read: allows reading resources
+  parameters:
+    status:
+      in: query
+      name: status
+      description: Fields to consider status.
+      required: false
+      schema:
+        type: string
+        default: PENDING
+        enum:
+          - ENDED
+          - STARTED
+          - CANCELED
+          - PENDING
+    preferredField:
+      in: query
+      name: preferredField
+      description: Fields to consider to order the elements.
+      required: false
+      schema:
+        type: string
+        example: id
+        default: id
+    startDateTime:
+      in: query
+      name: startDateTime
+      description: Fields to consider to filter by start datetime.
+      required: false
+      schema:
+        type: string
+        format: date-time
+        example: '2017-07-21T17:32:28.000Z'
+    endDateTime:
+      in: query
+      name: endDateTime
+      description: Fields to consider to filter by ended datetime.
+      required: false
+      schema:
+        type: string
+        format: date-time
+        example: '2017-07-21T17:32:28.000Z'
+    id:
+      in: path
+      name: id
+      description: Current entity ID.
+      required: true
+      schema:
+        type: string
+        example: d815d301-8bae-4dd0-a292-56e0cb7509d6
+    token:
+      in: header
+      name: token
+      description: security token
+      required: true
+      schema:
+        type: string
+        example: 283jebuiVIVEG&#G#UGFXVVWWVD#h3dndon3j0d1hd119hd&ywyw^YS
+  schemas:
+    IDModel:
+      type: object
+      title: IDModel
+      required:
+        - currentId
+      properties:
+        currentId:
+          type: integer
+          format: int64
+          example: 1
+    BaseSample:
+      type: object
+      title: BaseSample
+      properties:
+        name:
+          type: string
+          example: Unit Testing
+        description:
+          type: string
+          example: Sample sur la mise en place des test unitaires...
+        status:
+          type: string
+          default: PENDING
+          enum:
+            - ENDED
+            - STARTED
+            - CANCELED
+            - PENDING
+        startDateTime:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28.000Z'
+        endDateTime:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28.000Z'
+    SampleRequest:
+      allOf:
+        - $ref: '#/components/schemas/BaseSample'
+        - type: object
+          title: SampleRequest
+          required:
+            - name
+            - description
+            - startDateTime
+            - endDateTime
+            - status
+    AuditModel:
+      allOf:
+        - $ref: '#/components/schemas/AuditModel'
+        - type: object
+          title: AuditModel
+          required:
+            - createdAt
+            - modifiedAt
+            - createdBy
+            - modifiedBy
+          properties:
+            createdAt:
+              type: string
+              format: date-time
+              example: '2017-07-21T17:32:28.000Z'
+            modifiedAt:
+              type: string
+              format: date-time
+              example: '2017-07-21T17:32:28.000Z'
+            createdBy:
+              type: string
+              example: b815d301-8bae-4dd0-a292-56e0cb7509d5
+            modifiedBy:
+              type: string
+              example: b815d301-8bae-4dd0-a292-56e0cb7509d5
+    BaseResponseModel:
+      allOf:
+        - $ref: '#/components/schemas/IDModel'
+        - $ref: '#/components/schemas/AuditModel'
+        - type: object
+          title: BaseResponseModel
+    SampleResponse:
+      allOf:
+        - $ref: '#/components/schemas/IDModel'
+        - $ref: '#/components/schemas/SampleRequest'
+        - $ref: '#/components/schemas/BaseResponseModel'
+        - type: object
+          title: SampleResponse
+    UpdatedSampleRequest:
+      allOf:
+        - $ref: '#/components/schemas/BaseSample'
+        - $ref: '#/components/schemas/AuditModel'
+        - type: object
+          title: UpdatedSampleRequest
+          required:
+            - name
+            - description
+            - startDateTime
+            - endDateTime
+            - status
+    DeleteSampleResponse:
+      allOf:
+        - $ref: '#/components/schemas/IDModel'
+        - type: object
+          title: DeleteSampleResponse
+          required:
+            - message
+          properties:
+            message:
+              type: string
+              default: Element removed successfully
+    PatchedSampleRequest:
+      allOf:
+        - $ref: '#/components/schemas/BaseSample'
+        - type: object
+          title: PatchedSampleRequest

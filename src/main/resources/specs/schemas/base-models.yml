@@ -1,0 +1,44 @@
+IDModel:
+  type: object
+  title: IDModel
+  required:
+    - currentId
+  properties:
+    currentId:
+      type: integer
+      format: int64
+      example: 1
+
+AuditModel:
+  allOf:
+    - $ref: '#/AuditModel'
+    - type: object
+      title: AuditModel
+      required:
+        - createdAt
+        - modifiedAt
+        - createdBy
+        - modifiedBy
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+          example: 2017-07-21T17:32:28.000Z
+        modifiedAt:
+          type: string
+          format: date-time
+          example: 2017-07-21T17:32:28.000Z
+        createdBy:
+          type: string
+          example: b815d301-8bae-4dd0-a292-56e0cb7509d5
+        modifiedBy:
+          type: string
+          example: b815d301-8bae-4dd0-a292-56e0cb7509d5
+
+
+BaseResponseModel:
+  allOf:
+    - $ref: '#/IDModel'
+    - $ref: '#/AuditModel'
+    - type: object
+      title: BaseResponseModel
