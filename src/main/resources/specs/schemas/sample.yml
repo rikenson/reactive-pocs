@@ -1,5 +1,37 @@
 $ref: './base-models.yml'
 
+
+SampleFilter:
+  type: object
+  title: SampleFilter
+  properties:
+    page:
+      type: integer
+      format: int32
+      default: 0
+    size:
+      type: integer
+      format: int32
+      default: 10
+    name:
+      type: string
+    preferredField:
+      type: string
+      default: "name"
+    status:
+      type: string
+      default: PENDING
+      enum: [ ENDED, STARTED, CANCELED, PENDING ]
+    startDateTime:
+      type: string
+      format: date-time
+      example: "2017-07-21T17:32:28.000Z"
+    endDateTime:
+      type: string
+      format: date-time
+      example: "2017-07-21T17:32:28.000Z"
+
+
 BaseSample:
   type: object
   title: BaseSample

@@ -1,19 +1,19 @@
 #___________________________________________________________________________
-#1.Add brand sample
+#4.Find page of sample
 post:
   tags:
     - sample-endpoints
   summary: Register new sample.
-  operationId: addSample
+  operationId: searchSamples
   description: Add a brand new sample
   requestBody:
     content:
       application/json:
         schema:
-          $ref: "../schemas/sample.yml#/SampleRequest"
+          $ref: "../schemas/sample.yml#/SampleFilter"
   responses:
     "201":
-      description: Item created successfully.
+      description: Items load successfully.
       content:
         application/json:
           schema:

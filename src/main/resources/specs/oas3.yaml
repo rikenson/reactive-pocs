@@ -53,6 +53,25 @@ tags:
   - name: sample-endpoints
     description: Samples management operations
 paths:
+  /samples/search:
+    post:
+      tags:
+        - sample-endpoints
+      summary: Register new sample.
+      operationId: searchSamples
+      description: Add a brand new sample
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SampleFilter'
+      responses:
+        '201':
+          description: Items load successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleResponse'
   /samples:
     post:
       tags:
@@ -72,25 +91,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SampleResponse'
-    get:
-      tags:
-        - sample-endpoints
-      summary: Fetch pages of samples filtered by criteria.
-      operationId: searchSamples
-      parameters:
-        - $ref: '#/components/parameters/status'
-        - $ref: '#/components/parameters/preferredField'
-        - $ref: '#/components/parameters/startDateTime'
-        - $ref: '#/components/parameters/endDateTime'
-      responses:
-        '200':
-          description: Found item structure.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SampleResponse'
   /samples/{id}:
     put:
       tags:
@@ -174,28 +174,14 @@ components:
             write: allows modifying resources
             read: allows reading resources
   parameters:
-    status:
-      in: query
-      name: status
-      description: Fields to consider status.
-      required: false
+    id:
+      in: path
+      name: id
+      description: Current entity ID.
+      required: true
       schema:
         type: string
-        default: PENDING
-        enum:
-          - ENDED
-          - STARTED
-          - CANCELED
-          - PENDING
-    preferredField:
-      in: query
-      name: preferredField
-      description: Fields to consider to order the elements.
-      required: false
-      schema:
-        type: string
-        example: id
-        default: id
+        example: d815d301-8bae-4dd0-a292-56e0cb7509d6
     startDateTime:
       in: query
       name: startDateTime
@@ -214,14 +200,28 @@ components:
         type: string
         format: date-time
         example: '2017-07-21T17:32:28.000Z'
-    id:
-      in: path
-      name: id
-      description: Current entity ID.
-      required: true
+    preferredField:
+      in: query
+      name: preferredField
+      description: Fields to consider to order the elements.
+      required: false
       schema:
         type: string
-        example: d815d301-8bae-4dd0-a292-56e0cb7509d6
+        example: id
+        default: id
+    status:
+      in: query
+      name: status
+      description: Fields to consider status.
+      required: false
+      schema:
+        type: string
+        default: PENDING
+        enum:
+          - ENDED
+          - STARTED
+          - CANCELED
+          - PENDING
     token:
       in: header
       name: token
@@ -231,6 +231,39 @@ components:
         type: string
         example: 283jebuiVIVEG&#G#UGFXVVWWVD#h3dndon3j0d1hd119hd&ywyw^YS
   schemas:
+    SampleFilter:
+      type: object
+      title: SampleFilter
+      properties:
+        page:
+          type: integer
+          format: int32
+          default: 0
+        size:
+          type: integer
+          format: int32
+          default: 10
+        name:
+          type: string
+        preferredField:
+          type: string
+          default: name
+        status:
+          type: string
+          default: PENDING
+          enum:
+            - ENDED
+            - STARTED
+            - CANCELED
+            - PENDING
+        startDateTime:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28.000Z'
+        endDateTime:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28.000Z'
     IDModel:
       type: object
       title: IDModel
@@ -344,3 +377,106 @@ components:
         - $ref: '#/components/schemas/BaseSample'
         - type: object
           title: PatchedSampleRequest
+    Sort:
+      type: object
+      title: Sort
+      required:
+        - sorted
+        - unsorted
+        - empty
+      properties:
+        sorted:
+          type: boolean
+          example: false
+        unsorted:
+          type: boolean
+          example: true
+        empty:
+          type: boolean
+          example: true
+    PageableExtra:
+      type: object
+      title: PageableExtra
+      required:
+        - totalElements
+        - totalPages
+        - last
+        - numberOfElements
+        - sort
+        - size
+        - number
+        - first
+        - empty
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+          example: 0
+        totalPages:
+          type: integer
+          format: int64
+          example: 0
+        last:
+          type: boolean
+          example: false
+        numberOfElements:
+          type: integer
+          format: int64
+          example: 0
+        sort:
+          $ref: '#/components/schemas/Sort'
+        size:
+          type: integer
+          format: int64
+          example: 0
+        number:
+          type: integer
+          format: int64
+          example: 0
+        first:
+          type: boolean
+          example: true
+        empty:
+          type: boolean
+          example: false
+    Pageable:
+      type: object
+      title: Pageable
+      required:
+        - sort
+        - pageNumber
+        - pageSize
+        - offset
+        - paged
+        - unpaged
+      properties:
+        sort:
+          $ref: '#/components/schemas/Sort'
+        pageNumber:
+          type: integer
+          format: int64
+          example: 0
+        pageSize:
+          type: integer
+          format: int64
+          example: 0
+        offset:
+          type: integer
+          format: int64
+          example: 0
+        paged:
+          type: boolean
+          example: true
+        unpaged:
+          type: boolean
+          example: true
+    AbstractPage:
+      allOf:
+        - $ref: '#/components/schemas/PageableExtra'
+        - type: object
+          title: AbstractPage
+          required:
+            - pageable
+          properties:
+            pageable:
+              $ref: '#/components/schemas/Pageable'

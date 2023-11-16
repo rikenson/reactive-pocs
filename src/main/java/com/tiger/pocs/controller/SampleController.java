@@ -2,19 +2,17 @@ package com.tiger.pocs.controller;
 
 import com.tiger.pocs.service.sample.ISample;
 import com.tiger.rpocs.handler.SamplesApi;
-import com.tiger.rpocs.payload.DeleteSampleResponse;
-import com.tiger.rpocs.payload.PatchedSampleRequest;
-import com.tiger.rpocs.payload.SampleRequest;
-import com.tiger.rpocs.payload.SampleResponse;
+import com.tiger.rpocs.payload.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 
 @Controller
@@ -63,14 +61,20 @@ public class SampleController implements SamplesApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<SampleResponse>>> searchSamples(
-            String status,
-            String preferredField,
-            LocalDateTime startDateTime,
-            LocalDateTime endDateTime,
-            ServerWebExchange exchange) {
+    public Mono<ResponseEntity<Page<SampleResponse>>> searchSamples(Mono<SampleFilter> sampleFilter, ServerWebExchange exchange) {
 
-        return Mono.just(ResponseEntity.ok(service.retrieveAll()));
+        var sf = sampleFilter.map(sFilter -> {
+            if (Objects.isNull(sFilter.getStartDateTime()))
+                sFilter.setStartDateTime(LocalDateTime.now().minusYears(10));
+            if (Objects.isNull(sFilter.getEndDateTime()))
+                sFilter.setStartDateTime(LocalDateTime.now());
+            return sFilter;
+        });
+
+        return service.retrieveAll(sf)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.ok().build());
+
 
     }
 }

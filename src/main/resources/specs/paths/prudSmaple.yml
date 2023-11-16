@@ -63,7 +63,7 @@ patch:
 
 
 #___________________________________________________________________________
-#4.Find page of sample
+#4.Find sample by id
 get:
   tags:
     - sample-endpoints
