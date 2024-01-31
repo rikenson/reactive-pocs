@@ -60,21 +60,21 @@ public class SampleController implements SamplesApi {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @Override
-    public Mono<ResponseEntity<Page<SampleResponse>>> searchSamples(Mono<SampleFilter> sampleFilter, ServerWebExchange exchange) {
+    // @Override
+    // public Mono<ResponseEntity<Page<SampleResponse>>> searchSamples(Mono<SampleFilter> sampleFilter, ServerWebExchange exchange) {
 
-        var sf = sampleFilter.map(sFilter -> {
-            if (Objects.isNull(sFilter.getStartDateTime()))
-                sFilter.setStartDateTime(LocalDateTime.now().minusYears(10));
-            if (Objects.isNull(sFilter.getEndDateTime()))
-                sFilter.setStartDateTime(LocalDateTime.now());
-            return sFilter;
-        });
+    //     var sf = sampleFilter.map(sFilter -> {
+    //         if (Objects.isNull(sFilter.getStartDateTime()))
+    //             sFilter.setStartDateTime(LocalDateTime.now().minusYears(10));
+    //         if (Objects.isNull(sFilter.getEndDateTime()))
+    //             sFilter.setStartDateTime(LocalDateTime.now());
+    //         return sFilter;
+    //     });
 
-        return service.retrieveAll(sf)
-                .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.ok().build());
+    //     return service.retrieveAll(sf)
+    //             .map(ResponseEntity::ok)
+    //             .defaultIfEmpty(ResponseEntity.ok().build());
 
 
-    }
+    // }
 }
